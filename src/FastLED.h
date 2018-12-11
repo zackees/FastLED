@@ -127,6 +127,10 @@ template<EOrder RGB_ORDER> class DMXSERIAL : public DMXSerialController<RGB_ORDE
 
 template<EOrder RGB_ORDER> class DUMMY : public DummyController<RGB_ORDER> {};
 
+#ifdef HAS_WEB
+template<uint16_t PORT, uint8_t INDEX> class WEB : public WebController<PORT, INDEX> {};
+#endif
+
 enum EBlockChipsets {
 #ifdef PORTA_FIRST_PIN
 	WS2811_PORTA,
@@ -364,6 +368,15 @@ public:
 	template<template<EOrder RGB_ORDER> class CHIPSET>
 	static CLEDController &addLeds(struct CRGB *data, int nLedsOrOffset, int nLedsIfOffset = 0) {
 		static CHIPSET<RGB> c;
+		return addLeds(&c, data, nLedsOrOffset, nLedsIfOffset);
+	}
+
+	/// @tparam CHIPSET - the chipset type (required)
+	/// @tparam PORT - the TCP port to listen on (required)
+	/// @tparam INDEX - the image index (0-based) to display to (required)
+	template<template<uint16_t PORT, uint8_t INDEX> class CHIPSET, uint16_t PORT, uint8_t INDEX>
+	static CLEDController &addLeds(struct CRGB *data, int nLedsOrOffset, int nLedsIfOffset = 0) {
+		static CHIPSET<PORT, INDEX> c;
 		return addLeds(&c, data, nLedsOrOffset, nLedsIfOffset);
 	}
 
