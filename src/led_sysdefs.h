@@ -33,6 +33,9 @@
 #elif defined(ESP32)
 #include "platforms/esp/32/led_sysdefs_esp32.h"
 #elif defined(__AVR__) || defined(__AVR_ATmega4809__)
+#elif defined(__unix__)
+#include "platforms/unix/led_sysdefs_unix.h"
+#else
 // AVR platforms
 #include "platforms/avr/led_sysdefs_avr.h"
 #elif defined(ARDUINO_ARCH_APOLLO3)
