@@ -636,22 +636,22 @@ protected:
 
 /// Helper for WebController: we need exactly one PngServer per port;
 /// this provides a template class container for that.
-template<uint16_t PORT>
+template<uint16_t WEB_PORT>
 class PortHolder {
 public:
 	static PngServer m_png_server;
 };
 
-template<uint16_t PORT>
-PngServer PortHolder<PORT>::m_png_server(PORT);
+template<uint16_t WEB_PORT>
+PngServer PortHolder<WEB_PORT>::m_png_server(WEB_PORT);
 
 /// Web controller class - sends data to a browser via WebSockets.
-/// @tparam PORT the port number to listen on
+/// @tparam WEB_PORT the port number to listen on
 /// @tparam INDEX the image index (0-based) to display to
-template<uint16_t PORT, uint8_t INDEX>
+template<uint16_t WEB_PORT, uint8_t INDEX>
 class WebController : public CPixelLEDController<RGB> {
-	/// One PNG server per PORT, to listen on that port.
-	static PortHolder<PORT> m_port_holder;
+	/// One PNG server per WEB_PORT, to listen on that port.
+	static PortHolder<WEB_PORT> m_port_holder;
 
 public:
 	WebController() {
@@ -661,7 +661,7 @@ public:
 protected:
 	virtual void init() {
 		// Safe because spawn_thread is idempotent - only one thread
-		// will be started per PORT.
+		// will be started per WEB_PORT.
 		m_port_holder.m_png_server.spawn_thread();
 	}
 
