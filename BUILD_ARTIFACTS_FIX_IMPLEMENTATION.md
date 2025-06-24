@@ -25,9 +25,9 @@ This document summarizes the implementation of fixes for the GitHub Actions buil
 **File**: `.github/workflows/cleanup-artifacts.yml` (NEW)
 
 **Features**:
-- ✅ **Weekly automated cleanup**: Runs every Sunday at 2 AM UTC
+- ✅ **Release-triggered cleanup**: Runs once per release when a release is published
 - ✅ **Manual trigger support**: Can be run on-demand via workflow_dispatch
-- ✅ **Artifact retention**: Automatically deletes artifacts older than 7 days
+- ✅ **Artifact retention**: Automatically deletes artifacts older than 30 days
 - ✅ **Safe failure handling**: Uses `failOnError: false` to prevent workflow failures
 
 **Benefits**:
@@ -67,10 +67,11 @@ This document summarizes the implementation of fixes for the GitHub Actions buil
    find ./docs -name "*.bak" -delete || true
    ```
 
-3. **Scheduled Maintenance**:
+3. **Release-based Maintenance**:
    ```yaml
-   - cron: '0 2 * * 0'  # Weekly cleanup
-   retentionDays: 7     # Keep artifacts for 7 days only
+   release:
+     types: [released]  # Cleanup on each release
+   retentionDays: 30    # Keep artifacts for 30 days
    ```
 
 ### Permissions Configuration
@@ -117,8 +118,8 @@ After the next release, verify the implementation:
 
 2. **Verify cleanup workflow**:
    - Go to Actions tab in GitHub
-   - Check for successful `cleanup-artifacts` runs
-   - Verify old artifacts are being removed
+   - Check for successful `cleanup-artifacts` runs after releases
+   - Verify old artifacts are being removed after each release
 
 3. **Monitor storage usage**:
    - GitHub Settings → Billing → Actions storage
@@ -126,8 +127,8 @@ After the next release, verify the implementation:
 
 ## 🛠️ Maintenance & Monitoring
 
-### Weekly Tasks
-- ✅ **Automated**: Cleanup workflow runs automatically
+### Per-Release Tasks
+- ✅ **Automated**: Cleanup workflow runs automatically on each release
 - ✅ **No manual intervention required**
 
 ### Monthly Review
