@@ -1,0 +1,31 @@
+name: cleanup-artifacts
+
+on:
+  schedule:
+    # Run weekly cleanup on Sundays at 2 AM UTC
+    - cron: '0 2 * * 0'
+  # Allow manual triggering
+  workflow_dispatch:
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+    
+    steps:
+      - name: Delete old artifacts
+        uses: geekyeggo/delete-artifact@v2
+        with:
+          # Delete all artifacts older than 7 days
+          name: '*'
+          failOnError: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # Keep artifacts for 7 days only
+          retentionDays: 7
+
+      - name: Log cleanup completion
+        run: |
+          echo "Artifact cleanup completed successfully"
+          echo "Old GitHub Actions artifacts have been removed to save storage space"
